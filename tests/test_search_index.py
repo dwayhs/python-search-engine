@@ -1,7 +1,7 @@
 import unittest
 
 from py_search_engine.searchengine import (InvertedIndex, SearchIndex,
-                                           SimpleIndexPipeline)
+                                           SimpleAnalyzer)
 from tests.fixtures import load_document_fixture
 
 
@@ -17,7 +17,7 @@ class TestSearchIndex(unittest.TestCase):
         search_index = SearchIndex(
             terms_store=InvertedIndex(),
             mapping={
-                'text': SimpleIndexPipeline()
+                'text': SimpleAnalyzer()
             }
         )
 

@@ -47,7 +47,7 @@ class SearchIndex:
     def search(self, attribute, search_string):
         attribute_analyzer = self.mapping[attribute]
 
-        search_terms = attribute_analyzer.execute_pipeline(search_string)
+        search_terms = attribute_analyzer.analyze(search_string)
 
         return self.terms_store.search(search_terms)
 
@@ -57,7 +57,7 @@ class SearchIndex:
         for attribute_name, attribute_analyzer in self.mapping.items():
             document_attribute_value = document[attribute_name]
 
-            terms += attribute_analyzer.execute_pipeline(document_attribute_value)
+            terms += attribute_analyzer.analyze(document_attribute_value)
 
         return terms
 
@@ -65,13 +65,13 @@ class SearchIndex:
         self.terms_store.index(terms, document)
 
 
-class SimpleIndexPipeline:
+class SimpleAnalyzer:
     PIPELINE = [
         SimpleNormalizeFilter,
         SimpleTokenizer
     ]
 
-    def execute_pipeline(self, term):
+    def analyze(self, term):
         terms = [term]
         for pipeline_step in self.PIPELINE:
             terms = pipeline_step(terms).process()
