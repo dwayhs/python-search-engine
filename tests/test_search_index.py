@@ -2,7 +2,7 @@ import unittest
 
 from py_search_engine.analysis.analyzers.simple_analyzer import SimpleAnalyzer
 from py_search_engine.core.index import Index
-from py_search_engine.searchengine import InvertedIndex
+from py_search_engine.indexing.inverted_index import InvertedIndex
 from tests.fixtures import load_document_fixture
 
 
