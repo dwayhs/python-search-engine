@@ -2,52 +2,6 @@
 import random
 
 
-class BaseFilter:
-    def __init__(self, input_list):
-        self.input_list = input_list
-
-    def process(self):
-        # TODO: optimize
-        processed_terms = []
-
-        for term in self.input_list:
-            processed_terms += self._process_term(term)
-
-        return processed_terms
-
-    def _process_term(self, item):
-        raise NotImplementedError
-
-    def _flatten(self, token_list):
-        return [token for token_sublist in token_list for token in token_sublist]
-
-
-class SimpleNormalizeFilter(BaseFilter):
-    def _process_term(self, term):
-        # TODO: replaces special chars...
-        # TODO: lowercases...
-        return [term]
-
-
-class SimpleTokenizer(BaseFilter):
-    def _process_term(self, term):
-        return term.split(' ')
-
-
-class SimpleAnalyzer:
-    PIPELINE = [
-        SimpleNormalizeFilter,
-        SimpleTokenizer
-    ]
-
-    def analyze(self, term):
-        terms = [term]
-        for pipeline_step in self.PIPELINE:
-            terms = pipeline_step(terms).process()
-
-        return terms
-
-
 class InvertedIndex:
     def __init__(self):
         self.inverted_index = {}

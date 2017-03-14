@@ -1,7 +1,8 @@
 import unittest
 
-from py_search_engine.searchengine import (InvertedIndex, SearchIndex,
-                                           SimpleAnalyzer)
+from py_search_engine.analysis.analyzers.simple_analyzer import SimpleAnalyzer
+from py_search_engine.core.index import Index
+from py_search_engine.searchengine import InvertedIndex
 from tests.fixtures import load_document_fixture
 
 
@@ -14,7 +15,7 @@ class TestSearchIndex(unittest.TestCase):
         ]
 
     def test_query_indexed_documents(self):
-        search_index = SearchIndex(
+        index = Index(
             terms_store=InvertedIndex(),
             mapping={
                 'text': SimpleAnalyzer()
@@ -22,9 +23,9 @@ class TestSearchIndex(unittest.TestCase):
         )
 
         for document in self.test_documents:
-            search_index.index(document)
+            index.index(document)
 
-        resulting_documents = search_index.search('text', 'President Trump')
+        resulting_documents = index.search('text', 'President Trump')
 
         resulting_document_titles = [document['title']
                                      for document
