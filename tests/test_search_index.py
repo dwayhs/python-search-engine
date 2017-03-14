@@ -15,14 +15,16 @@ class TestSearchIndex(unittest.TestCase):
 
     def test_query_indexed_documents(self):
         search_index = SearchIndex(
-            index_pipeline=SimpleIndexPipeline(indexed_columns=['text']),
-            terms_store=InvertedIndex()
+            terms_store=InvertedIndex(),
+            mapping={
+                'text': SimpleIndexPipeline()
+            }
         )
 
         for document in self.test_documents:
             search_index.index(document)
 
-        resulting_documents = search_index.search("President Trump")
+        resulting_documents = search_index.search('text', 'President Trump')
 
         resulting_document_titles = [document['title']
                                      for document

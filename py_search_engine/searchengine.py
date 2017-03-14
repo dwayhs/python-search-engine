@@ -35,19 +35,31 @@ class SimpleTokenizer(BaseFilter):
 
 
 class SearchIndex:
-    def __init__(self, index_pipeline, terms_store):
-        self.index_pipeline = index_pipeline
+    def __init__(self, terms_store, mapping={}):
         self.terms_store = terms_store
+        self.mapping = mapping
 
     def index(self, document):
-        processed_terms = self.index_pipeline.execute_pipeline(document)
-        self._store(processed_terms, document)
+        document_terms = self._extract_terms_from_document(document)
 
-    def search(self, search_string):
-        # TODO: use pipeline to get query terms
-        search_terms = search_string.split(' ')
+        self._store(document_terms, document)
+
+    def search(self, attribute, search_string):
+        attribute_analyzer = self.mapping[attribute]
+
+        search_terms = attribute_analyzer.execute_pipeline(search_string)
 
         return self.terms_store.search(search_terms)
+
+    def _extract_terms_from_document(self, document):
+        terms = []
+
+        for attribute_name, attribute_analyzer in self.mapping.items():
+            document_attribute_value = document[attribute_name]
+
+            terms += attribute_analyzer.execute_pipeline(document_attribute_value)
+
+        return terms
 
     def _store(self, terms, document):
         self.terms_store.index(terms, document)
@@ -59,20 +71,12 @@ class SimpleIndexPipeline:
         SimpleTokenizer
     ]
 
-    def __init__(self, indexed_columns=[]):
-        self.indexed_columns = indexed_columns
-
-    def execute_pipeline(self, document):
-        terms = self._extract_index_content(document)
-
+    def execute_pipeline(self, term):
+        terms = [term]
         for pipeline_step in self.PIPELINE:
             terms = pipeline_step(terms).process()
 
         return terms
-
-    def _extract_index_content(self, document):
-        return [document[column] for column in self.indexed_columns]
-
 
 
 class InvertedIndex:
