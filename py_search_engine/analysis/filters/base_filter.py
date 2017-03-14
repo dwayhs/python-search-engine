@@ -13,6 +13,3 @@ class BaseFilter:
 
     def _process_term(self, item):
         raise NotImplementedError
-
-    def _flatten(self, token_list):
-        return [token for token_sublist in token_list for token in token_sublist]
