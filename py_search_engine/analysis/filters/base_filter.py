@@ -1,15 +1,19 @@
 class BaseFilter:
-    def __init__(self, input_list):
-        self.input_list = input_list
+    def __init__(self, tokens_list):
+        self.tokens_list = tokens_list
 
     def process(self):
-        # TODO: optimize
         processed_terms = []
 
-        for term in self.input_list:
-            processed_terms += self._process_term(term)
+        for term, position in self.tokens_list:
+            processed_term_list = self.process_term(term)
+
+            processed_term_list = [(processed_term, position)
+                                   for processed_term in processed_term_list]
+
+            processed_terms += processed_term_list
 
         return processed_terms
 
-    def _process_term(self, item):
+    def process_term(self, term):
         raise NotImplementedError

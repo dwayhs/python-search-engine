@@ -21,8 +21,8 @@ class InvertedIndex:
     def _query(self, search_terms):
         resulting_documents = []
 
-        for search_term in search_terms:
-            resulting_documents += self.inverted_index[search_term]
+        for search_term, position in search_terms:
+            resulting_documents += self.inverted_index[search_term].keys()
 
         return set(resulting_documents)
 
@@ -37,11 +37,14 @@ class InvertedIndex:
         self.document_store[document_id] = document
 
     def _add_terms_to_index(self, document_id, terms):
-        for term in terms:
-            self._add_term_to_index(term, document_id)
+        for term, position in terms:
+            self._add_term_to_index(term, position, document_id)
 
-    def _add_term_to_index(self, term, document_id):
-        if term in self.inverted_index:
-            self.inverted_index[term].append(document_id)
-        else:
-            self.inverted_index[term] = [document_id]
+    def _add_term_to_index(self, term, position, document_id):
+        if term not in self.inverted_index:
+            self.inverted_index[term] = {}
+
+        if document_id not in self.inverted_index[term]:
+            self.inverted_index[term][document_id] = []
+
+        self.inverted_index[term][document_id].append(position)
